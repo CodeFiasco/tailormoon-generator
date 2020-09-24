@@ -2,23 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import * as faceapi from 'face-api.js';
 
-const Loader = styled.canvas`
-    color: #ffffff;
-    font-size: 20px;
-    margin: 100px auto;
-    width: 1em;
-    height: 1em;
-    border-radius: 50%;
-    position: relative;
-    text-indent: -9999em;
-    -webkit-animation: load 1.3s infinite linear;
-    animation: load 1.3s infinite linear;
-    -webkit-transform: translateZ(0);
-    -ms-transform: translateZ(0);
-    transform: translateZ(0);
-`;
-
 const Container = styled.div``;
+
+const Loader = styled.h1`
+    text-align: center;
+`;
 
 function FaceSwap({ faces }) {
     const [initialized, setInitialized] = useState(false);
@@ -49,43 +37,51 @@ function FaceSwap({ faces }) {
         const sailorMoon = new Image();
         sailorMoon.src = '/sailor-moon.png';
 
+        const title = new Image();
+
         sailorMoon.onload = async () => {
-            const detections = await faceapi
-                .detectAllFaces(faces)
-                .withFaceLandmarks()
-                .withFaceDescriptors();
+            title.src = '/title.png';
 
-            const { box } = detections[0].detection;
+            title.onload = async () => {
+                const detections = await faceapi
+                    .detectAllFaces(faces)
+                    .withFaceLandmarks()
+                    .withFaceDescriptors();
 
-            context.drawImage(
-                faces,
-                box.topLeft.x,
-                box.topLeft.y,
-                box.width,
-                box.height,
-                330,
-                85,
-                160,
-                160
-            );
+                const { box } = detections[0].detection;
 
-            context.drawImage(
-                sailorMoon,
-                0,
-                0,
-                sailorMoon.width,
-                sailorMoon.height,
-                0,
-                0,
-                sailorMoon.width,
-                sailorMoon.height
-            );
+                context.drawImage(
+                    faces,
+                    box.topLeft.x,
+                    box.topLeft.y,
+                    box.width,
+                    box.height,
+                    330,
+                    85,
+                    160,
+                    160
+                );
 
-            containerRef.current.append(canvas);
+                context.drawImage(
+                    sailorMoon,
+                    0,
+                    0,
+                    sailorMoon.width,
+                    sailorMoon.height,
+                    0,
+                    0,
+                    sailorMoon.width,
+                    sailorMoon.height
+                );
+
+                context.drawImage(title, 0, sailorMoon.height - 62);
+
+                containerRef.current.append(canvas);
+            };
         };
     }, [faces, initialized]);
 
-    return initialized ? <Container ref={containerRef} /> : <Loader />;
+    return initialized ? <Container ref={containerRef} /> : <Loader>Loading</Loader>;
 }
 
 export default FaceSwap;

@@ -1,10 +1,19 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import Webcam from 'webcam-easy';
+import Button from './button';
 
 const Video = styled.video`
+    width: 100%;
+    height: 440px;
+    margin-bottom: 10px;
+`;
+
+const Container = styled.div`
     width: 640px;
     height: 480px;
+    max-width: 100%;
+    text-align: center;
 `;
 
 const Canvas = styled.canvas`
@@ -44,11 +53,11 @@ function PhotoBooth({ onLoad }) {
     }
 
     return (
-        <>
+        <Container>
             <Video ref={videoRef} autoPlay playsinline />
             <Canvas className="d-none" ref={canvasRef} />
-            {webcam && <button onClick={takePhoto}>Snap</button>}
-        </>
+            {webcam && <Button onClick={takePhoto}>I want to be a &lt;TAILor moon_&gt;</Button>}
+        </Container>
     );
 }
 
